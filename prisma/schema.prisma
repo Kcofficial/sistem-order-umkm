@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Int
+  category    String
+  imageUrl    String?
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems OrderItem[]
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  queueNumber   String      @unique
+  customerName  String?
+  totalAmount   Int
+  status        OrderStatus @default(WAITING)
+  paymentMethod PaymentMethod?
+  paymentStatus PaymentStatus @default(PENDING)
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  orderItems OrderItem[]
+}
+
+model OrderItem {
+  id          String @id @default(cuid())
+  orderId     String
+  menuItemId  String
+  quantity    Int
+  price       Int
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+enum OrderStatus {
+  WAITING
+  CONFIRMED
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  QRIS
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
