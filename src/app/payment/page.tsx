@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -37,6 +37,18 @@ export default function PaymentPage({ order, onBack, onPaymentComplete }: Paymen
   const [selectedMethod, setSelectedMethod] = useState<'CASH' | 'QRIS'>('CASH')
   const [showQRCode, setShowQRCode] = useState(false)
   const [paymentProcessing, setPaymentProcessing] = useState(false)
+
+  // --- KODE PERBAIKAN UTAMA: Proteksi data order ---
+  if (!order || !order.queueNumber) {
+    // Mengembalikan pesan loading yang aman jika order undefined saat prerender.
+    // Ini menghentikan Next.js mencoba membaca 'queueNumber' dari objek yang tidak ada.
+    return (
+      <div className="min-h-screen p-4 flex items-center justify-center">
+        <p className="text-gray-500">Memuat data pesanan...</p>
+      </div>
+    );
+  }
+  // ----------------------------------------------------
 
   const generateQRCode = () => {
     // Generate QR code data for QRIS payment
