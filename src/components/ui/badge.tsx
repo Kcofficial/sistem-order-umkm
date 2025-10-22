@@ -1,4 +1,5 @@
-"use client"
+// src/components/ui/badge.tsx
+"use client" // WAJIB ada, karena menggunakan Radix Slot dan cva
 
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
@@ -27,22 +28,28 @@ const badgeVariants = cva(
   }
 )
 
-function Badge({
-  className,
-  variant,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : "span"
-
-  return (
-    <Comp
-      data-slot="badge"
-      className={cn(badgeVariants({ variant }), className)}
-      {...props}
-    />
-  )
+export interface BadgeProps
+  extends React.ComponentPropsWithoutRef<"span">,
+    VariantProps<typeof badgeVariants> {
+  asChild?: boolean;
 }
 
-export { Badge, badgeVariants }
+// Menggunakan React.forwardRef dan named export langsung
+export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "span";
+
+    return (
+      <Comp
+        data-slot="badge"
+        className={cn(badgeVariants({ variant }), className)}
+        ref={ref} // Meneruskan ref
+        {...props}
+      />
+    );
+  }
+);
+
+Badge.displayName = "Badge"; // Tambahkan display name
+
+export { badgeVariants }; // Pertahankan export terpisah untuk variants
