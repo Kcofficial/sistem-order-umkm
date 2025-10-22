@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-// PERBAIKAN: Memastikan semua komponen UI diimpor dengan benar sebagai named imports.
+// PERBAIKAN: Mengimpor setiap komponen UI dari file yang berbeda untuk menghindari konflik destructuring.
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -20,7 +20,7 @@ import {
 import { toast } from 'sonner'
 import { useSocket } from '@/hooks/useSocket'
 
-// Antarmuka (Interface) tetap sama
+// --- Interfaces (Tidak Berubah) ---
 interface Order {
   id: string
   queueNumber: string
@@ -91,7 +91,7 @@ export default function KDSPage() {
     }
   }, [socket])
 
-  // --- Fetch Data & Logic Functions ---
+  // --- Fetch Data & Logic Functions (Tidak Berubah) ---
 
   const fetchOrders = async () => {
     try {
