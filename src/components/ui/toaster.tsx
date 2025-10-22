@@ -1,3 +1,5 @@
+// src/components/ui/toaster.tsx
+
 "use client"
 
 import { useToast } from "@/hooks/use-toast"
@@ -10,7 +12,8 @@ import {
   ToastViewport,
 } from "@/components/ui/toast"
 
-export function Toaster() {
+// Menggunakan export const untuk stabilitas yang lebih baik di Next.js
+export const Toaster = () => {
   const { toasts } = useToast()
 
   return (
