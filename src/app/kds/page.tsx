@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+// PERBAIKAN: Memastikan semua komponen UI diimpor dengan benar sebagai named imports.
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+
 import { 
   Clock, 
   ChefHat, 
@@ -18,6 +20,7 @@ import {
 import { toast } from 'sonner'
 import { useSocket } from '@/hooks/useSocket'
 
+// Antarmuka (Interface) tetap sama
 interface Order {
   id: string
   queueNumber: string
@@ -53,6 +56,8 @@ export default function KDSPage() {
   
   const { socket, connected, joinKitchen, notifyStatusUpdate } = useSocket()
 
+  // --- useEffects (Socket & Polling) ---
+
   useEffect(() => {
     fetchOrders()
     // Set up polling for real-time updates (fallback)
@@ -85,6 +90,8 @@ export default function KDSPage() {
       socket.off('order-updated')
     }
   }, [socket])
+
+  // --- Fetch Data & Logic Functions ---
 
   const fetchOrders = async () => {
     try {
@@ -174,12 +181,15 @@ export default function KDSPage() {
       default: return <Clock className="w-4 h-4" />
     }
   }
-
+  
+  // Urutkan pesanan aktif berdasarkan waktu dibuat (Nomor Antrian)
   const activeOrders = orders.filter(order => 
     ['WAITING', 'CONFIRMED', 'PREPARING', 'READY'].includes(order.status)
   ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
 
   const completedOrders = orders.filter(order => order.status === 'COMPLETED')
+
+  // --- Komponen Render Utama ---
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
