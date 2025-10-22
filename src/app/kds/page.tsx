@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-// PERBAIKAN: Mengimpor setiap komponen UI dari file yang berbeda untuk menghindari konflik destructuring.
+// Menggunakan alias untuk meminimalkan konflik nama impor (jika diperlukan)
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -12,7 +12,8 @@ import {
   ChefHat, 
   CheckCircle, 
   AlertCircle, 
-  Kitchen,
+  // Ikon 'Kitchen' tidak ada. Diganti dengan 'Utensils'.
+  Utensils, 
   DollarSign,
   ShoppingCart,
   Bell
@@ -60,19 +61,16 @@ export default function KDSPage() {
 
   useEffect(() => {
     fetchOrders()
-    // Set up polling for real-time updates (fallback)
-    const interval = setInterval(fetchOrders, 10000) // Update every 10 seconds
+    const interval = setInterval(fetchOrders, 10000) 
     return () => clearInterval(interval)
   }, [])
 
-  // Join kitchen room when connected
   useEffect(() => {
     if (connected) {
       joinKitchen()
     }
   }, [connected, joinKitchen])
 
-  // Listen for new orders and updates
   useEffect(() => {
     if (!socket) return
 
@@ -91,7 +89,7 @@ export default function KDSPage() {
     }
   }, [socket])
 
-  // --- Fetch Data & Logic Functions (Tidak Berubah) ---
+  // --- Fetch Data & Logic Functions ---
 
   const fetchOrders = async () => {
     try {
@@ -99,7 +97,6 @@ export default function KDSPage() {
       const data = await response.json()
       setOrders(data)
       
-      // Calculate stats
       const stats = {
         totalOrders: data.length,
         waitingOrders: data.filter((o: Order) => o.status === 'WAITING').length,
@@ -129,7 +126,6 @@ export default function KDSPage() {
       if (response.ok) {
         const order = await response.json()
         
-        // Notify via WebSocket
         notifyStatusUpdate({
           orderId,
           status: newStatus,
@@ -182,7 +178,6 @@ export default function KDSPage() {
     }
   }
   
-  // Urutkan pesanan aktif berdasarkan waktu dibuat (Nomor Antrian)
   const activeOrders = orders.filter(order => 
     ['WAITING', 'CONFIRMED', 'PREPARING', 'READY'].includes(order.status)
   ).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
@@ -199,7 +194,8 @@ export default function KDSPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Kitchen className="w-6 h-6 text-orange-600" />
+                {/* PERBAIKAN: Mengganti Kitchen dengan Utensils */}
+                <Utensils className="w-6 h-6 text-orange-600" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-800">Kitchen Display System</h1>
