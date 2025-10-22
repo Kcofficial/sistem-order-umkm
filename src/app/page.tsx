@@ -8,25 +8,18 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ShoppingCart, Clock, User, CheckCircle, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
-import dynamic from 'next/dynamic'; // WAJIB: Dynamic import untuk komponen yang berat/berisiko
+import dynamic from 'next/dynamic';
+
+// Import Dynamic Socket Hook (Dipertahankan, diasumsikan hook sudah ada)
+import { useSocket } from '@/hooks/useSocket'
 
 // Import Dynamic Payment Component (Menggantikan import statis PaymentPage)
 const DynamicPaymentPage = dynamic(() => import('./payment/page'), {
   ssr: false, // JANGAN render di server
 });
 
-// Import Dynamic Socket Hook (Menggunakan dynamic import untuk hook Sisi Klien yang berpotensi gagal)
-// Note: Di Next.js App Router, dynamic import hook dilakukan secara eksplisit seperti di bawah, 
-// atau diasumsikan useSocket memiliki proteksi internal yang kuat.
-// Karena kita tidak bisa mengubah useSocket, kita biarkan saja, namun perlu memastikan useSocket 
-// memuat socket.io client dengan dynamic import.
-
-import { useSocket } from '@/hooks/useSocket' 
-// Jika useSocket menyebabkan crash, Anda harus mengubah useSocket agar me-return null 
-// jika tidak dijalankan di browser, atau memuat socket client secara dinamis.
-
 // --------------------------------------------------------------------------------------
-// Interfaces (Tetap Sama)
+// Interfaces
 // --------------------------------------------------------------------------------------
 
 interface MenuItem {
@@ -65,7 +58,7 @@ export default function Home() {
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   
-  // Memanggil useSocket (Diasumsikan useSocket dapat menangani kegagalan koneksi di Vercel)
+  // Memanggil useSocket
   const { socket, connected, joinCustomer } = useSocket()
 
   // Generate queue number on mount
